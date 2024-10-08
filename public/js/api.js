@@ -672,7 +672,7 @@ function dishModalFunc() {
             if (!success) {
                 return
             }
-            alert('Dish updated successfully!');
+            showAlert('Dish updated successfully!', 3000, true);
             location.reload(); // Reload the page to see the updated dish list
         } else {
             // Adding a new dish (POST request)
