@@ -1,0 +1,81 @@
+/* Hero section styling */
+.hero {
+    height: 80vh;
+    background-size: cover;
+    background-position: center;
+    /* max-height: 32rem; */
+}
+
+/* Center content in hero section */
+.hero .text-white {
+    max-width: 600px;
+}
+
+#services img {
+    max-height: 28rem;
+}
+
+#map {
+    min-height: 24rem;
+}
+
+a {
+    color: unset;
+    text-decoration: none;
+}
+
+.floating-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    z-index: 1000;
+    font-size: 1rem;
+}
+
+.btn-green {
+    background-color: #28a745;  /* Success green color */
+}
+
+.btn-red {
+    background-color: #dc3545;
+}
+
+/* Show alert with transition */
+.show-alert {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Menu Section */
+#menu .card {
+    transition: transform 0.3s;
+}
+
+#menu .card:hover {
+    transform: scale(1.05);
+}
+
+/* Footer */
+footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+#search-form > div{   
+    margin-bottom: 0px !important;
+}
+
+@media (max-width: 768px) {
+    #services .row:nth-child(2n) {
+        flex-direction: column-reverse;
+    }
+
+}

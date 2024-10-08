@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <%- include('./partials/navbar') %>
+
+    <div class="row">
+        <%- include('./partials/sidebar') %>
+
+        <!-- Main Content -->
+        <div class="col-lg-9 col-md-8 main-content">
+            <!-- Profile Section -->
+            <section id="cart" class="mt-5">
+                <h3 class="mb-4">Your Cart</h3>
+                <ul id="cartItems" class="list-unstyled">
+                    <!-- Cart items will be dynamically generated here -->
+                </ul>
+                <div id="cartSummary" class="mt-4">
+                    <p>Total: $<span id="cartTotal">0.00</span></p>
+                    <button id="checkoutButton" class="btn btn-success" style="display: none;">Proceed to
+                        Checkout</button>
+                    <p id="emptyCartMessage" style="display: none;">Your cart is empty.</p>
+                </div>
+            </section>
+
+            <hr>
+
+        </div>
+    </div>
+
+            <script src="../js/bootstrap.bundle.min.js"></script>
+            <script src="../js/api.js"></script>
+</body>
+
+</html>

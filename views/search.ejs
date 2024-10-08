@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Dishes</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <style>
+        .custom-modal {
+            max-height: 80%;
+            /* Set maximum width to 80% of the screen */
+        }
+
+        @media (max-width: 768px) {
+            .custom-modal {
+                max-width: 95%;
+                /* Make it 95% on smaller screens */
+            }
+        }
+    </style>
+    <%- include('./partials/navbar') %>
+
+        <!-- Search Form Section -->
+        <section id="search" class="py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Search for Dishes</h2>
+                <form id="search-form" class="d-flex flex-column flex-md-row justify-content-center align-items-center">
+                    <div class="mb-3 flex-grow-1 me-md-2">
+                        <input type="text" id="dish-search" class="form-control" placeholder="Search for dishes..."
+                            aria-label="Search for dishes">
+                    </div>
+                    <div class="mb-3 me-md-2">
+                        <select id="allergy-select" class="form-select" aria-label="Select allergy">
+                            <option selected disabled>Select your allergies</option>
+                            <option value="gluten">Gluten</option>
+                            <option value="dairy">Dairy</option>
+                            <option value="nuts">Nuts</option>
+                            <option value="shellfish">Shellfish</option>
+                            <option value="soy">Soy</option>
+                            <option value="eggs">Eggs</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark rounded-pill">Search</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Dishes Section -->
+        <section id="dishes" class="py-5">
+            <div class="container">
+                <div class="row" id="dishes-container">
+                    <!-- Dish Item -->
+
+                </div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination-container">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </section>
+
+        <div class="modal fade" id="dishModal" tabindex="-1" role="dialog" aria-labelledby="dishModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg custom-modal" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="dishModalLabel">Dish Information</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    </div>
+                    <div class="modal-body">
+                        <img src="" style="width: 100%;" alt="Dish Image" class="dish-image" id="modalDishImage">
+                        <h5 class="mt-3" id="modalDishName">Dish Name</h5>
+                        <p id="modalDishDescription">Description of the dish goes here.</p>
+                        <p><strong>Price:</strong> <span id="modalDishPrice">Price</span></p>
+                        <p><strong>Ingredients:</strong> <span id="modalDishIngredients">List of ingredients</span></p>
+                        <p><strong>Restaurant:</strong> <span id="modalRestaurantName">Restaurant Name</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white py-4">
+            <div class="container text-center">
+                <p>&copy; 2024 Food Delivery Service. All rights reserved.</p>
+                <p>Follow us on:
+                    <a href="#" class="text-white">Facebook</a> |
+                    <a href="#" class="text-white">Instagram</a> |
+                    <a href="#" class="text-white">Twitter</a>
+                </p>
+            </div>
+        </footer>
+
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/api.js"></script>
+</body>
+
+</html>

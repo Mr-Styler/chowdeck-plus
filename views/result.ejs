@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customized Food Results</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h1>Your Customized Food</h1>
+    <p><strong>Preferences:</strong> <%= preferences %></p>
+    <p><strong>Allergies:</strong> <%= allergies %></p>
+
+    <h2>Suggested Food:</h2>
+    <ul>
+        <% if (customizedFood.length > 0) { %>
+            <% customizedFood.forEach(food => { %>
+                <li><%= food %></li>
+            <% }) %>
+        <% } else { %>
+            <li>No suitable food found for your preferences and allergies.</li>
+        <% } %>
+    </ul>
+
+    <a href="/">Go Back</a>
+</body>
+</html>

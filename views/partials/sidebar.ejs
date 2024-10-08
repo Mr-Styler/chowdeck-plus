@@ -1,0 +1,41 @@
+<!-- Side Panel (Navigation) -->
+<div class="col-lg-3 col-md-4 sidebar">
+    <div class="list-group">
+        <a href="/profile" class="list-group-item list-group-item-action active" aria-current="true">
+            Profile
+        </a>
+        <a href="/cart" class="list-group-item list-group-item-action">Cart</a>
+        <a href="/settings" class="list-group-item list-group-item-action">Settings</a>
+        <a href="/logout" class="list-group-item list-group-item-action">Logout</a>
+    </div>
+</div>
+
+<style>
+    body {
+        height: 100vh; /* Full height */
+        overflow: hidden; /* Prevent scrolling */
+    }
+    .sidebar {
+        height: 100%; /* Full height */
+        padding: 20px;
+        background-color: #f8f9fa; /* Light grey background */
+        position: fixed; /* Fixed position */
+        width: 250px; /* Fixed width */
+    }
+    .sidebar .list-group-item {
+        color: black; /* Black text */
+        border: none; /* No border */
+        border-radius: 0; /* No border radius */
+    }
+    .sidebar .list-group-item.active {
+        background-color: #e2e6ea; /* Active item color */
+    }
+    .sidebar .list-group-item:hover {
+        background-color: #e2e6ea; /* Hover effect */
+    }
+    .main-content {
+        margin-left: 250px; /* Space for sidebar */
+        padding: 20px;
+        overflow-y: auto; /* Enable scrolling for content */
+    }
+</style>

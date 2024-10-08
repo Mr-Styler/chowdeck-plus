@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner's Dashboard</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/styles.css"></link> For icons
+
+    <style>
+        /* General body styles */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            background-color: #f8f9fa;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #343a40;
+            position: fixed;
+            width: 100%;
+            z-index: 1;
+            top: 0;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            position: fixed;
+            top: 56px; /* Height of the fixed navbar */
+            left: 0;
+            overflow-y: auto;
+            z-index: 1;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+            font-size: 1.1em;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5em;
+            text-align: center;
+            color: white;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 19rem;
+            margin-top: 56px;
+            height: calc(100vh - 56px); /* Full height minus navbar */
+            padding: 20px;
+        }
+
+        .content-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none; /* Initially hidden */
+        }
+
+        .content-section.active {
+            display: block; /* Show only the active section */
+        }
+
+        .content h1 {
+            font-size: 2.2em;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <%- include('./partials/navbar') %>
+
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="sidebar col-lg-3 col-md-4">
+            <h2>Owner Dashboard</h2>
+            <a href="#restaurant-info" class="tab-link" data-target="restaurant-info"><i class="fas fa-info-circle"></i> Restaurant Info</a>
+            <a href="#manage-dishes" class="tab-link" data-target="manage-dishes"><i class="fas fa-utensils"></i> Manage Dishes</a>
+            <a href="#statistics" class="tab-link" data-target="statistics"><i class="fas fa-chart-line"></i> Statistics</a>
+            <a href="#settings" class="tab-link" data-target="settings"><i class="fas fa-chart-line"></i> Settings</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content col-lg-9 col-md-8">
+            <h1>Owner's Dashboard</h1>
+
+            <section id="restaurant-info" class="content-section active">
+                <h2>Restaurant Information</h2>
+                <div class="d-flex justify-content-between">
+                    <div id="restaurantDetails">
+                        <!-- Restaurant details will be populated here -->
+                    </div>
+                    <div id="logo">
+
+                    </div>
+                </div>
+            </section>
+
+            <section id="manage-dishes" class="content-section">
+                <div class="container">
+                    <div class="col-12 mb-4 d-flex justify-content-between">                        <h2>Manage Dishes</h2>
+                        <button class="btn btn-dark rounded-pill" id="addDishBtn">Add New Dish</button>
+                    </div>
+                    <div class="row" id="dishes-container">
+
+                        <!-- Dish Item -->
+                    </div>
+        
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center" id="pagination-container">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+
+            <section id="statistics" class="content-section">
+                <h2>Statistics</h2>
+                <div id="statisticsDetails">
+                    <!-- Statistics will be populated here -->
+                </div>
+            </section>
+
+            <section id="settings" class="content-section">
+                <h2>Settings</h2>
+                <div id="">
+                    <!-- Statistics will be populated here -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Single Modal for Add/Edit Dish -->
+<!-- Modal -->
+<div class="modal fade" id="dishModal" tabindex="-1" aria-labelledby="dishModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dishModalLabel">Add New Dish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="dishForm">
+                <div class="modal-body">
+                    <input type="hidden" id="dishId">
+                    <div class="mb-3">
+                        <label for="dishName" class="form-label">Dish Name</label>
+                        <input type="text" class="form-control" id="dishName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dishDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="dishDescription"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dishIngredients" class="form-label">Ingredients (comma-separated)</label>
+                        <input type="text" class="form-control" id="dishIngredients">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dishPrice" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="dishPrice">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dishImages" class="form-label">Image URLs (comma-separated)</label>
+                        <input type="text" class="form-control" id="dishImages">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+    <script>
+         document.querySelectorAll('.tab-link').forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const targetSection = this.getAttribute('data-target');
+
+                // Hide all sections
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show the targeted section
+                document.getElementById(targetSection).classList.add('active');
+            });
+        });
+    </script>
+
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+
+</body>
+</html>

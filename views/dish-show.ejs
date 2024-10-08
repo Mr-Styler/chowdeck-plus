@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Now</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">Food Delivery</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dishes">Dishes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/restaurants">Restaurants</a></li>
+                <li class="nav-item"><a class="nav-link" href="/cart">Cart (<span id="cartCount">0</span>)</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Our Menu</h2>
+        <div class="row" id="menu-items">
+            <!-- Menu items will be populated here -->
+        </div>
+    </div>
+
+    <!-- Cart Functionality -->
+    <script>
+        // Example menu items (this would typically come from your backend)
+        const menuItems = [
+            {
+                id: 1,
+                name: 'Burger',
+                description: 'Delicious beef burger with fresh lettuce and tomato.',
+                price: 8.99,
+                image: '../img/burger.jpg'
+            },
+            {
+                id: 2,
+                name: 'Pizza',
+                description: 'Cheesy pizza topped with pepperoni and mushrooms.',
+                price: 10.99,
+                image: '../img/pizza.jpg'
+            },
+            {
+                id: 3,
+                name: 'Pasta',
+                description: 'Pasta with a rich tomato sauce and herbs.',
+                price: 7.99,
+                image: '../img/pasta.jpg'
+            }
+            // Add more items as needed
+        ];
+
+        const cart = [];
+        
+        function populateMenu() {
+            const menuContainer = document.getElementById('menu-items');
+            menuItems.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'col-lg-4 col-md-6';
+                itemCard.innerHTML = `
+                    <div class="card">
+                        <img src="${item.image}" class="card-img-top" alt="${item.name}">
+                        <div class="card-body">
+                            <h5 class="card-title">${item.name}</h5>
+                            <p class="card-text">${item.description}</p>
+                            <p class="card-text"><strong>Price: $${item.price.toFixed(2)}</strong></p>
+                            <button class="btn btn-primary" onclick="addToCart(${item.id})">Order Now</button>
+                        </div>
+                    </div>
+                `;
+                menuContainer.appendChild(itemCard);
+            });
+        }
+
+        function addToCart(itemId) {
+            const item = menuItems.find(menuItem => menuItem.id === itemId);
+            if (item) {
+                cart.push(item);
+                updateCartCount();
+                alert(`${item.name} has been added to your cart!`);
+            }
+        }
+
+        function updateCartCount() {
+            document.getElementById('cartCount').innerText = cart.length;
+        }
+
+        // Initial population of menu items
+        populateMenu();
+    </script>
+
+    <script src="../bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Details</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Food Delivery</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dishes">Dishes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/restaurants">Restaurants</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Restaurant Details Section -->
+<div class="container my-5">
+    <div class="container-fluid split-view d-flex">
+        <div class="col-md-6 d-flex flex-column justify-content-center align-items-center p-4 bg-light">
+            <h2 id="restaurantName" class="text-center">Restaurant Name</h2>
+            <p id="restaurantAddress" class="text-center">123 Main St, Anytown, USA</p>
+            <p id="restaurantDescription" class="text-center">A lovely place to enjoy delicious food.</p>
+            <div class="text-center">
+                <img id="restaurantLogo" class="img-fluid" alt="Restaurant Logo" style="max-width: 200px;">
+            </div>
+        </div>
+        <div class="col-md-6 map">
+            <!-- Map will be displayed here -->
+            <%- include('./partials/map') %>
+
+             <!-- <div class="" id="map"></div> -->
+        </div>
+    </div>
+
+    <h3 class="mt-4">Dishes</h3>
+    <div class="row" id="dishesContainer">
+        <!-- Dishes will be dynamically inserted here -->
+    </div>
+</div>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+<!-- Bootstrap scripts -->
+<script src="../js/bootstrap.bundle.min.js"></script>
+<script src="../js/api.js"></script>
+
+<script>
+    
+function initMap() {
+    // Initialize the map
+    const restaurantLocation = { lat: 40.712776, lng: -74.005974 }; // Replace with dynamic coordinates
+    const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 14,
+        center: restaurantLocation,
+    });
+    const marker = new google.maps.Marker({
+        position: restaurantLocation,
+        map: map,
+        title: "Restaurant Name", // Change this to the restaurant name
+    });
+}
+</script>
+</body>
+</html>

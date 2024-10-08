@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Update Allergies</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+
+    <h1>Update Your Allergies</h1>
+    <form id="allergyForm">
+        <label for="allergies">Allergies:</label>
+        <input type="text" id="allergies" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script src="/api.js"></script>
+    <script>
+        document.getElementById('allergyForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const allergies = document.getElementById('allergies').value;
+            const success = await updateAllergies(allergies);  // Assuming this function is in api.js
+            if (success) {
+                window.location.href = '/profile';  // Redirect to profile after successful update
+            } else {
+                alert('Error updating allergies');
+            }
+        });
+    </script>
+</body>
+</html>
