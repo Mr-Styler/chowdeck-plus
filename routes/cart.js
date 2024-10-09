@@ -7,7 +7,8 @@ const {
   updateMyCart,
   getAllCarts,
   updateCart,
-  deleteCart
+  deleteCart,
+  clearCart
 } = require('../controllers/cartController');
 const auth = require('../middleware/authMiddleware');
 const restrictTo = require('../middleware/roleMiddleware');
@@ -26,6 +27,7 @@ router
 
 router.post('/me/add', addToCart);
 router.post('/me/remove', removeFromCart);
+router.post('/me/clear', clearCart);
 
 // Admin routes
 router.use(restrictTo('admin'));
