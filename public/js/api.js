@@ -1,7 +1,5 @@
-// const baseUrl = 'https://my-chowdeck.onrender.com/api';  
-// const originBaseUrl = 'https://my-chowdeck.onrender.com';  
-const baseUrl = 'http://localhost:3000/api';
-const originBaseUrl = 'http://localhost:3000';
+const baseUrl = 'https://chowdeck-plus.onrender.com/api';
+const originBaseUrl = 'https://chowdeck-plus.onrender.com/';
 
 // Helper function to get headers with JWT token
 const getHeaders = () => {
