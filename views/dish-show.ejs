@@ -1,94 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Now</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .card {
-            margin-bottom: 20px;
-        }
-    </style>
+    <title>Food Delivery Service</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
 </head>
+
 <body>
     <%- include('./partials/navbar') %>
 
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Our Menu</h2>
-        <div class="row" id="menu-items">
-            <!-- Menu items will be populated here -->
-        </div>
-    </div>
-
-    <!-- Cart Functionality -->
-    <script>
-        // Example menu items (this would typically come from your backend)
-        const menuItems = [
-            {
-                id: 1,
-                name: 'Burger',
-                description: 'Delicious beef burger with fresh lettuce and tomato.',
-                price: 8.99,
-                image: '../img/burger.jpg'
-            },
-            {
-                id: 2,
-                name: 'Pizza',
-                description: 'Cheesy pizza topped with pepperoni and mushrooms.',
-                price: 10.99,
-                image: '../img/pizza.jpg'
-            },
-            {
-                id: 3,
-                name: 'Pasta',
-                description: 'Pasta with a rich tomato sauce and herbs.',
-                price: 7.99,
-                image: '../img/pasta.jpg'
-            }
-            // Add more items as needed
-        ];
-
-        const cart = [];
-        
-        function populateMenu() {
-            const menuContainer = document.getElementById('menu-items');
-            menuItems.forEach(item => {
-                const itemCard = document.createElement('div');
-                itemCard.className = 'col-lg-4 col-md-6';
-                itemCard.innerHTML = `
-                    <div class="card">
-                        <img src="${item.image}" class="card-img-top" alt="${item.name}">
-                        <div class="card-body">
-                            <h5 class="card-title">${item.name}</h5>
-                            <p class="card-text">${item.description}</p>
-                            <p class="card-text"><strong>Price: $${item.price.toFixed(2)}</strong></p>
-                            <button class="btn btn-primary" onclick="addToCart(${item.id})">Order Now</button>
-                        </div>
+        <section id="order" class="py-5">
+            <div class="container">
+                
+                <div class="modal-body">
+                    <img src="" style="width: 100%;" alt="Dish Image" class="dish-image" id="modalDishImage">
+                    <h3 class="mt-3" id="modalDishName">Dish Name</h3>
+                    <p id="modalDishDescription">Description of the dish goes here.</p>
+                    <p><strong>Price:</strong> <span id="modalDishPrice">Price</span></p>
+                    <p><strong>Ingredients:</strong> <span id="modalDishIngredients">List of ingredients</span></p>
+                    <p><strong>Restaurant:</strong> <span id="modalRestaurantName">Restaurant Name</span></p>
+                </div>
+                
+                <div class="modal-bottom mt-5">
+                    
+                    <h5>Drop a message for the chef</h5>
+                    <textarea name="message" class="w-100" id="note"></textarea>
+                </div>
+                
+                <div class="d-flex justify-content-between mt-3">
+                    <div class="d-flex align-items-center">
+                        <h5>Quantity: </h5>
+                        <input class="form-control ms-5 text-center" id="quantity" style="width: 5rem;" value="1" type="number">
                     </div>
-                `;
-                menuContainer.appendChild(itemCard);
-            });
-        }
+                    <button class="btn btn-dark rounded-pill add-btn" data-id="" >Add to cart</button>
+                </div>
+            </div>
+        </section>
 
-        function addToCart(itemId) {
-            const item = menuItems.find(menuItem => menuItem.id === itemId);
-            if (item) {
-                cart.push(item);
-                updateCartCount();
-                alert(`${item.name} has been added to your cart!`);
-            }
-        }
+        <!-- Include Google Maps JavaScript API -->
 
-        function updateCartCount() {
-            document.getElementById('cartCount').innerText = cart.length;
-        }
 
-        // Initial population of menu items
-        populateMenu();
-    </script>
+        <!-- Footer -->
+        <footer class="bg-dark text-white py-4">
+            <div class="container text-center">
+                <p>&copy; 2024 Food Delivery Service. All rights reserved.</p>
+                <p>Follow us on:
+                    <a href="#" class="text-white">Facebook</a> |
+                    <a href="#" class="text-white">Instagram</a> |
+                    <a href="#" class="text-white">Twitter</a>
+                </p>
+            </div>
+        </footer>
 
-    <script src="../js/bootstrap.bundle.min.js"></script>
-    <script src="../js/api.js"></script>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script src="../js/api.js"></script>
 </body>
+
 </html>
+
