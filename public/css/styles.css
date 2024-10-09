@@ -24,6 +24,11 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    color: unset;
+    text-decoration: none !important;
+}
+
 .floating-alert {
     position: fixed;
     top: 20px;
