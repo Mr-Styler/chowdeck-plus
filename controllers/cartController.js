@@ -27,13 +27,14 @@ exports.getMyCart = catchAsyncHandler(async (req, res, next) => {
 
 // Add a dish to the cart
 exports.addToCart = catchAsyncHandler(async (req, res, next) => {
-    const {dishId, quantity} = req.body;
+    const {dishId, quantity, note} = req.body;
     const cart = await Cart.findById(req.user.cart);
 
     if (!cart) {
         next(new AppError(`Cart not found`, 404))
     }
     cart.addItem(dishId, quantity)
+    cart.notes.push(note)
     await cart.save();
 
     res.status(200).json({
