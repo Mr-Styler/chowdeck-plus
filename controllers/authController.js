@@ -39,7 +39,7 @@ exports.login = catchAsyncHandler(async (req, res, next) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     // Set the JWT in a cookie
     res.cookie('jwt', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' }); // Use secure cookies in production
-    res.json({ token, message: "login successful" });
+    res.json({ token, message: "login successful", role: user.role });
 });
 
 exports.forgotPassword = catchAsyncHandler(async (req, res, next) => {
@@ -100,7 +100,7 @@ exports.updatePassword = catchAsyncHandler(async (req, res, next) => {
 })
 
 exports.logout = (req, res) => {
-    res.clearCookie('token'); // This clears the session
+    res.clearCookie('jwt'); // This clears the session
     res.status(200).json({ message: 'Logged out successfully' });
 };
 
