@@ -1,7 +1,7 @@
-const baseUrl = 'https://chowdeck-plus.onrender.com/api';  
-const originBaseUrl = 'https://chowdeck-plus.onrender.com';  
-// const baseUrl = 'http://localhost:3000/api';
-// const originBaseUrl = 'http://localhost:3000';
+// const baseUrl = 'https://my-chowdeck.onrender.com/api';  
+// const originBaseUrl = 'https://my-chowdeck.onrender.com';  
+const baseUrl = 'http://localhost:3000/api';
+const originBaseUrl = 'http://localhost:3000';
 
 // Helper function to get headers with JWT token
 const getHeaders = () => {
@@ -88,7 +88,7 @@ const sendLoginRequest = async (event) => {
     }
     localStorage.setItem('jwt', success.token);  // Store JWT token in localStorage
     await showAlert(`${success.message}`, 5000, true);
-    location.href = "/profile";  // Fetch profile after successful login
+    location.href = (success.role === "admin") ? "/admin/dashbord" : (success.role === "owner") ? "/owner/dashboard" : "/profile";  // Fetch profile after successful login
 }
 
 // Function to fetch data from your API (e.g., user info, authentication status)
@@ -107,7 +107,7 @@ async function fetchUserData() {
 // Function to search for dishes
 async function searchDishes(name, allergies, page) {
     allergies = (allergies === "Select your allergies") ? undefined : allergies
-    endpoint = `/dishes?name[regex]=${name}&name[options]=i&${allergies ? 'ingredients[nin]=' + allergies + '&' : ''}page=${page}`
+    endpoint = `/dishes?name[regex]=${name}&name[options]=i&${allergies ? 'ingredients[nin]=' + allergies + '&' : ''}page=${page}&populate=restaurant`
 
     const success = await customAxios(endpoint, 'GET', undefined, (data) => { showAlert(`${data.message}`, 3000, false) })
     // const success = await customAxios(`/dishes?name[regex]=${name}&ingredients[nin]=${allergies}&ingredients[in]=${preferredIngredients}`, 'GET', undefined, (data) => { showAlert(`${data.message}`, 3000, false) })
@@ -125,7 +125,7 @@ async function searchDishes(name, allergies, page) {
 }
 
 async function fetchDishes(page = 1) {
-    const success = await customAxios('/dishes', 'GET', undefined, (data) => { showAlert(`${data.message}`, 3000, false);
+    const success = await customAxios('/dishes?populate=restaurant', 'GET', undefined, (data) => { showAlert(`${data.message}`, 3000, false);
     document.getElementById('dishes-container').innerHTML = '<p>Failed to load dishes.</p>';
 })
 
@@ -139,6 +139,22 @@ async function fetchDishes(page = 1) {
 
     updateDishesSection(dishes);
     updatePagination(totalPages, page);
+}
+
+async function fetchDish() {
+    const dishId = document.URL.match(/\/order\/([a-zA-Z0-9]+)/)[1];; // Get this from the URL or context
+    const success = await customAxios(`/dishes/${dishId}?populate=restaurant`, 'GET', undefined, (data) => { showAlert(`${data.message}`, 3000, false);
+    document.getElementById('dishes-container').innerHTML = '<p>Failed to load dish.</p>';
+})
+
+    if (!success) {
+        return
+    }
+
+    const dish = success.data.document;  // Array of dish objects
+    console.log(dish)
+
+    updateDishSection(dish);
 }
 
 async function createRestaurant(event) {
@@ -290,19 +306,49 @@ async function fetchCart() {
         return
     }
 
-    updateCartUI(success.data);
+    console.log(success.data.document)
+
+    updateCartUI(success.data.document);
+}
+
+async function addToCart(dishId, quantity, note) {
+    const userData = await customAxios('/cart/me/add', "POST", { dishId, quantity, note }, (data) => { showAlert(`${data.message}`, 3000, false) });  // Adjust the endpoint as necessary
+
+    if (!userData) {
+        return
+    }
+
+    showAlert(`Dish added to cart`, 3000, true)
 }
 
 // Remove item from cart
 async function removeFromCart(dishId) {
 
-    const success = await customAxios('/cart/remove', 'POST', { dishId }, (data) => { showAlert(`${data.message}`, 3000, false) })
+    const success = await customAxios('/cart/me/remove', 'POST', { dishId }, (data) => { showAlert(`${data.message}`, 3000, false) })
 
     if (!success) {
         return
     }
 
     await showAlert(`${success.message}`, 5000, true);
+    location.reload()
+}
+
+// Remove item from cart
+async function clearCart() {
+
+    const success = await customAxios('/cart/me/clear', 'POST', undefined, (data) => { showAlert(`${data.message}`, 3000, false) })
+
+    if (!success) {
+        return
+    }
+
+    const cartModal = document.getElementById('cartModal');
+
+    const modal = new bootstrap.Modal(cartModal);
+    await modal.show(); // Show the modal
+    await showAlert(`${success.message}`, 3000, true);
+    location.reload()
 }
 
 async function updateAllergies(allergies) {
@@ -328,20 +374,23 @@ function updateCartUI(cart) {
     cartItemsElement.innerHTML = ''; // Clear existing cart items
     if (cart && cart.items.length > 0) {
         let total = 0;
-        cart.items.forEach(item => {
+
+        for (let i = 0; i < cart.items.length; i++) {
             const itemElement = document.createElement('li');
             itemElement.classList.add('card', 'mb-3');
             itemElement.innerHTML = `
                 <div class="card-body">
-                    <h5 class="card-title">${item.dish.name} - Quantity: ${item.quantity}</h5>
-                    <p class="card-text">Price: $${item.dish.price} each</p>
-                    <button class="btn btn-dark rounded-pill" onclick="removeFromCart('${item.dish._id}')">Remove</button>
+                    <h5 class="card-title">${cart.items[i].dish.name} - Quantity: ${cart.items[i].quantity}</h5>
+                    <p class="card-text">Price: $${cart.items[i].dish.price} each</p>
+                    <p class="card-text">Note: ${cart.notes[i]}</p>
+                    <button class="btn btn-dark rounded-pill" onclick="removeFromCart('${cart.items[i].dish._id}')">Remove</button>
                 </div>
             `;
             cartItemsElement.appendChild(itemElement);
 
-            total += item.dish.price * item.quantity;
-        });
+            total += cart.items[i].dish.price * cart.items[i].quantity;
+        }
+
         cartTotalElement.textContent = total.toFixed(2);
         checkoutButton.style.display = 'block';
         emptyCartMessage.style.display = 'none';
@@ -395,9 +444,9 @@ function updateNavbarForAuthenticatedUser(user) {
     // Define login/logout items based on user authentication status
     const authItems = user.username ? `
     <li class="nav-item">
-        <a class="nav-link" href="/logout">
+        <button style="background: none; border: none;" class="nav-link" onclick="logout()">
             <i class="bi bi-box-arrow-right" style="font-size: 1rem;"></i>
-        </a>
+        </button>
     </li>
     ` : `
         <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
@@ -447,8 +496,7 @@ function updateDishesSection(dishes) {
           <p class="card-text">${dish.description}</p>
           <p class="card-text"><strong>Price: $${dish.price.toFixed(2)}</strong></p> <!-- Added Price Display -->
           <div class="d-flex justify-content-between">
-            <button class="btn btn-dark rounded-pill add-btn" data-id="${dish._id}" >Add to cart</button>
-            <button class="btn btn-dark rounded-pill view-btn" 
+            <button class="btn btn-dark px-4 rounded-pill view-btn" 
                 data-id="${dish._id}" 
                 data-name="${dish.name}" 
                 data-description="${dish.description}" 
@@ -457,6 +505,11 @@ function updateDishesSection(dishes) {
                 data-images="${dish.images[0]}">
                 View
             </button>
+            <div class="d-flex align-items-center" style="border: 1px solid; border-radius: 4rem; padding: .3rem; padding-left: 1rem;">
+                <a href="/restaurant/${dish.restaurant._id}">
+                    <span>${dish.restaurant.name}</span> <img class="rounded-circle" style="width: 3rem; height: 3rem;" src="${dish.restaurant.logo}" alt="">
+                </a>
+            </div>
           </div>
         </div>
       </div>
@@ -481,24 +534,10 @@ function updateDishesSection(dishes) {
         dishIngredientsField.textContent = dish.ingredients.join(', '); // Assuming it's an array
         dishImagesField.src = dish.images.join(', '); // Assuming it's an array
         dishModalLabel.textContent = 'Dish Information';
+        dishModal.querySelector('.order-btn').href = `/order/${dish.id}`
 
         console.log("done")
     }
-
-
-
-    document.querySelectorAll('.add-btn').forEach(function (button) {
-        button.addEventListener('click', async function () {
-            const dishId = this.getAttribute('data-id')
-            const userData = await customAxios('/cart/me/add', "POST", { dishId }, (data) => { showAlert(`${data.message}`, 3000, false) });  // Adjust the endpoint as necessary
-
-            if (!userData) {
-                return
-            }
-
-            alert(`Dish added to cart`)
-        });
-    })
 
     document.querySelectorAll('.view-btn').forEach(function (button) {
         button.addEventListener('click', function () {
@@ -516,6 +555,36 @@ function updateDishesSection(dishes) {
         });
     })
 }
+
+// Function to dynamically update the dishes section
+function updateDishSection(dish) {
+    const dishNameField = document.getElementById('modalDishName');
+    const dishPriceField = document.getElementById('modalDishPrice');
+    const dishDescriptionField = document.getElementById('modalDishDescription');
+    const dishIngredientsField = document.getElementById('modalDishIngredients');
+    const restaurantNameField = document.getElementById('modalRestaurantName');
+    const dishImagesField = document.getElementById('modalDishImage');
+
+    dishNameField.textContent = dish.name;
+    dishPriceField.textContent = `$${dish.price}`;
+    dishDescriptionField.textContent = dish.description;
+    dishIngredientsField.textContent = dish.ingredients.join(', '); // Assuming it's an array
+    dishImagesField.src = dish.images.join(', '); // Assuming it's an array
+    restaurantNameField.textContent = dish.restaurant.name;
+    
+    document.querySelector('.add-btn').addEventListener('click', function () {
+        const dishId = dish._id
+        const quantity = document.querySelector('#quantity').value
+        const note = document.querySelector('#note').value
+
+        console.log(dishId, quantity, note)
+
+        addToCart(dishId, quantity, note)
+    });
+    console.log("done")
+
+}
+
 
 // Function to dynamically update the pagination
 function updatePagination(totalPages, currentPage) {
@@ -618,7 +687,6 @@ function dishModalFunc() {
         dishImagesField.value = dish.images.join(', '); // Assuming it's an array
         dishModalLabel.textContent = 'Edit Dish';
 
-        console.log("done")
     }
 
     // Handle Add Dish button click
@@ -639,7 +707,6 @@ function dishModalFunc() {
                 ingredients: this.getAttribute('data-ingredients').split(',').map(ingredient => ingredient.trim()), // Split and trim
                 images: this.getAttribute('data-images').split(',').map(image => image.trim()) // Split and trim
             };
-            console.log("start")
             populateModal(dish);
             const modal = new bootstrap.Modal(dishModal);
             modal.show(); // Show the modal
@@ -672,7 +739,7 @@ function dishModalFunc() {
             if (!success) {
                 return
             }
-            showAlert('Dish updated successfully!', 3000, true);
+            await showAlert('Dish updated successfully!', 3000, true);
             location.reload(); // Reload the page to see the updated dish list
         } else {
             // Adding a new dish (POST request)
@@ -681,7 +748,7 @@ function dishModalFunc() {
             if (!success) {
                 return
             }
-            alert('Dish added successfully!');
+            await showAlert('Dish added successfully!', 3000, true);
             location.reload(); // Reload the page to see the new dish
         }
     });
@@ -719,13 +786,23 @@ window.onload = function () {
         fetchRestaurantDetails()
     } else if (currentPath.startsWith('owner/dashboard')) {
         fetchOwnerRestaurant()
+    } else if (/\/order\/([a-zA-Z0-9]+)/.test(document.URL)) {
+        fetchDish()
     }
 };
 
 
 // Logout User
-function logout() {
+async function logout() {
+    const success = await customAxios('/auth/logout', 'POST', undefined, (data) => { showAlert(`${data.message}`, 3000, false) })
+
+    if (!success) {
+        return
+    }
+
+    console.log(success)
+
     localStorage.removeItem('jwt');
-    alert('Logged out');
+    await showAlert('Logged out', 3000, true);
     window.location.href = '/login';  // Redirect to login page
 }
