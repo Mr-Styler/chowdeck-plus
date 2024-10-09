@@ -25,13 +25,21 @@
                 </ul>
                 <div id="cartSummary" class="mt-4">
                     <p>Total: $<span id="cartTotal">0.00</span></p>
-                    <button id="checkoutButton" class="btn btn-success" style="display: none;">Proceed to
+                    <button id="checkoutButton" class="btn btn-success" style="display: none;" onclick="clearCart()">Proceed to
                         Checkout</button>
                     <p id="emptyCartMessage" style="display: none;">Your cart is empty.</p>
                 </div>
             </section>
 
-            <hr>
+            <div class="modal fade" id="cartModal" tabindex="-1" role="dialog" aria-labelledby="dishModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg custom-modal" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body"  style="display: flex; height: 75vh; align-items: center; justify-content: center;">
+                            <h5>Thanks for shopping with us</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
