@@ -33,8 +33,7 @@ const getHeaders = () => {
     
     // If token is expired, redirect to login or return null headers
     if (isTokenExpired(token)) {
-        localStorage.removeItem('jwt'); // Optionally remove the expired token
-        window.location.href = '/login'; // Redirect to login page
+        token = undefined
         return {};
     }
 
