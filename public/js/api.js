@@ -1,14 +1,75 @@
 const baseUrl = 'https://chowdeck-plus.onrender.com/api';
 const originBaseUrl = 'https://chowdeck-plus.onrender.com/';
 
-// Helper function to get headers with JWT token
+// Helper function to decode JWT
+const decodeJWT = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    } catch (error) {
+        return null; // If decoding fails
+    }
+};
+
+// Check if the token is expired
+const isTokenExpired = (token) => {
+    if (!token) return true; // If there's no token, consider it expired
+
+    const decoded = decodeJWT(token);
+    if (!decoded || !decoded.exp) return true;
+
+    const currentTime = Date.now() / 1000; // Current time in seconds
+    return decoded.exp < currentTime; // Token is expired if `exp` is less than the current time
+};
+
+// Helper function to get headers with JWT token and check expiration
 const getHeaders = () => {
     const token = localStorage.getItem('jwt');
+    
+    // If token is expired, redirect to login or return null headers
+    if (isTokenExpired(token)) {
+        localStorage.removeItem('jwt'); // Optionally remove the expired token
+        window.location.href = '/login'; // Redirect to login page
+        return {};
+    }
+
     return {
         'Content-Type': 'application/json',
         Authorization: token ? `Bearer ${token}` : ''
     };
 };
+
+// Custom Axios-like function to handle API requests
+const customAxios = async (endpoint, method, bodyObj, err_cb) => {
+    const requestObj = {
+        method,
+        headers: getHeaders(),
+        body: JSON.stringify(bodyObj)
+    };
+
+    try {
+        const response = await fetch(`${baseUrl}${endpoint}`, requestObj);
+        const data = await response.json();
+
+        // Handle error response
+        if (!response.ok) {
+            err_cb(data);
+            return false;
+        } else {
+            return data;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        err_cb({ message: 'Network error' }); // Handle network errors
+        return false;
+    }
+};
+
 
 function showAlert(message, duration = 3000, type) {
     return new Promise((resolve) => {
@@ -30,26 +91,6 @@ function showAlert(message, duration = 3000, type) {
             }, 500);
         }, duration);
     });
-}
-
-const customAxios = async (endpoint, method, bodyObj, err_cb) => {
-    const requestObj = {
-        method,
-        headers: getHeaders(),
-        body: JSON.stringify(bodyObj)
-    }
-
-
-    const response = await fetch(`${baseUrl}${endpoint}`, requestObj);
-
-    const data = await response.json();
-
-    if (!response.ok) {
-        err_cb(data)
-        return false
-    } else {
-        return data
-    }
 }
 
 // REQUESTS
