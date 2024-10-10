@@ -1,74 +1,16 @@
-const baseUrl = 'https://chowdeck-plus.onrender.com/api';
-const originBaseUrl = 'https://chowdeck-plus.onrender.com/';
+// const baseUrl = 'https://chowdeck-plus.onrender.com/api';
+// const originBaseUrl = 'https://chowdeck-plus.onrender.com';
+const baseUrl = 'http://localhost:3000/api';
+const originBaseUrl = 'http://localhost:3000';
 
-// Helper function to decode JWT
-const decodeJWT = (token) => {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-
-        return JSON.parse(jsonPayload);
-    } catch (error) {
-        return null; // If decoding fails
-    }
-};
-
-// Check if the token is expired
-const isTokenExpired = (token) => {
-    if (!token) return true; // If there's no token, consider it expired
-
-    const decoded = decodeJWT(token);
-    if (!decoded || !decoded.exp) return true;
-
-    const currentTime = Date.now() / 1000; // Current time in seconds
-    return decoded.exp < currentTime; // Token is expired if `exp` is less than the current time
-};
-
-// Helper function to get headers with JWT token and check expiration
+// Helper function to get headers with JWT token
 const getHeaders = () => {
     const token = localStorage.getItem('jwt');
-    
-    // If token is expired, redirect to login or return null headers
-    if (isTokenExpired(token)) {
-        token = undefined
-        return {};
-    }
-
     return {
         'Content-Type': 'application/json',
         Authorization: token ? `Bearer ${token}` : ''
     };
 };
-
-// Custom Axios-like function to handle API requests
-const customAxios = async (endpoint, method, bodyObj, err_cb) => {
-    const requestObj = {
-        method,
-        headers: getHeaders(),
-        body: JSON.stringify(bodyObj)
-    };
-
-    try {
-        const response = await fetch(`${baseUrl}${endpoint}`, requestObj);
-        const data = await response.json();
-
-        // Handle error response
-        if (!response.ok) {
-            err_cb(data);
-            return false;
-        } else {
-            return data;
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        err_cb({ message: 'Network error' }); // Handle network errors
-        return false;
-    }
-};
-
 
 function showAlert(message, duration = 3000, type) {
     return new Promise((resolve) => {
@@ -92,6 +34,25 @@ function showAlert(message, duration = 3000, type) {
     });
 }
 
+const customAxios = async (endpoint, method, bodyObj, err_cb) => {
+    const requestObj = {
+        method,
+        headers: getHeaders(),
+        body: JSON.stringify(bodyObj)
+    }
+
+
+    const response = await fetch(`${baseUrl}${endpoint}`, requestObj);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        err_cb(data)
+        return false
+    } else {
+        return data
+    }
+}
 // REQUESTS
 
 // Handle User Registration
@@ -803,9 +764,12 @@ function populateStatistics() {
 
 // Combined window.onload function
 window.onload = function () {
-    fetchUserData();  // Fetch user data on page load
-
     const currentPath = document.URL.split(`${originBaseUrl}/`)[1];
+
+    if(!currentPath.startsWith('register') || !currentPath.startsWith('login')) {
+        fetchUserData();  // Fetch user data on page load
+    }
+
 
     if (currentPath.startsWith('cart')) {
         // Initialize cart on page load
