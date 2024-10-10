@@ -100,7 +100,7 @@ async function fetchUserData() {
 
     console.log("something")
 
-    updateNavbarForAuthenticatedUser(userData.user);
+    return userData.user;
 }
 
 // Function to search for dishes
@@ -767,7 +767,7 @@ window.onload = function () {
     const currentPath = document.URL.split(`${originBaseUrl}/`)[1];
 
     if(!currentPath.startsWith('register') || !currentPath.startsWith('login')) {
-        fetchUserData();  // Fetch user data on page load
+        updateNavbarForAuthenticatedUser(fetchUserData());  // Fetch user data on page load
     }
 
 
