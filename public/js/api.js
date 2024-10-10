@@ -768,33 +768,36 @@ function populateStatistics() {
 }
 
 // Combined window.onload function
-window.onload = function () {
+window.onload = async function () {
     const currentPath = document.URL.split(`${originBaseUrl}/`)[1];
 
-    if(!currentPath.startsWith('register') || !currentPath.startsWith('login')) {
-        updateNavbarForAuthenticatedUser(fetchUserData());  // Fetch user data on page load
+    if (!currentPath.startsWith('register') && !currentPath.startsWith('login')) {
+        const userData = await fetchUserData(); // Wait for user data
+        if (userData) {
+            updateNavbarForAuthenticatedUser(userData); // Pass the resolved user data
+        } else {
+            showLoginSignupOptions(); // Show login/signup options if no user data
+        }
     }
 
-
     if (currentPath.startsWith('cart')) {
-        // Initialize cart on page load
         fetchCart();
     } else if (currentPath.startsWith('register')) {
         document.getElementById('registerFormElement').addEventListener('submit', sendRegisterRequest);
     } else if (currentPath.startsWith('login')) {
         document.getElementById('loginFormElement').addEventListener('submit', sendLoginRequest);
     } else if (currentPath.startsWith('dishes')) {
-        fetchDishes(1);  // Fetch dishes when on the "dishes" page
-        document.getElementById('search-form').addEventListener('submit', searchDishForm)
+        fetchDishes(1);
+        document.getElementById('search-form').addEventListener('submit', searchDishForm);
     } else if (currentPath.startsWith('restaurants')) {
         fetchRestaurants();
-        document.getElementById('restaurantForm').addEventListener('submit', createRestaurant)
+        document.getElementById('restaurantForm').addEventListener('submit', createRestaurant);
     } else if (/\/restaurant\/([a-zA-Z0-9]+)/.test(document.URL)) {
-        fetchRestaurantDetails()
+        fetchRestaurantDetails();
     } else if (currentPath.startsWith('owner/dashboard')) {
-        fetchOwnerRestaurant()
+        fetchOwnerRestaurant();
     } else if (/\/order\/([a-zA-Z0-9]+)/.test(document.URL)) {
-        fetchDish()
+        fetchDish();
     }
 };
 
